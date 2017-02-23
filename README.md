@@ -1,9 +1,9 @@
-## sat-api-express
+## hyperion-api
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-This is an express implementation of sat-api.
-
+This is an express implementation of hyperion-api.
+ 
 ### Installation
 
 Make sure you have an instance of Elasticsearch running. To populate it with Landsat and Sentinel metadata refer to [landsat8-metadata](https://github.com/sat-utils/landsat8-metadata) and [sentinel2-metadata](https://github.com/sat-utils/sentinel2-metadata)
@@ -12,4 +12,5 @@ Make sure you have an instance of Elasticsearch running. To populate it with Lan
     $ node index.js
 
 ### About
-Sat API Express was made by [Development Seed](http://developmentseed.org).
+Hyperion-api was tweaked by Pat Cappelaere for NASA GSFC
+Original Sat API Express was made by [Development Seed](http://developmentseed.org).

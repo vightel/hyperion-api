@@ -1,35 +1,36 @@
 {
-  "name": "sat-api-express",
+  "name": "hyperion-api",
   "version": "1.0.0",
-  "description": "An express implementation of sat-api",
+  "description": "An express implementation of hyperion-api",
   "main": "app/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "LOG_LEVEL=debug node index.js"
+    "serve": "LOG_LEVEL=debug node app/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sat-utils/sat-api-express.git"
+    "url": "git+https://github.com/vightel/hyperion-api.git"
   },
-  "author": "Alireza J (scisco)",
+  "author": "Pat G Cappelaere",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sat-utils/sat-api-express/issues"
+    "url": "https://github.com/vightel/hyperion-api/issues"
   },
-  "homepage": "https://github.com/sat-utils/sat-api-express#readme",
+  "homepage": "https://github.com/vightel/hyperion-api#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "cors": "^2.8.1",
     "envloader": "0.0.3",
     "express": "^4.13.4",
-    "sat-api-lib": "^0.5.0"
+    "request": "^2.79.0",
+    "sat-api-lib": "git://github.com/vightel/sat-api-lib"
   },
   "devDependencies": {
     "apidoc": "^0.17.5"
   },
   "apidoc": {
-    "title": "Sat API",
-    "url" : "api.developmentseed.org/satellites"
+    "title": "Hyperion API",
+    "url": "api.developmentseed.org/satellites"
   }
 }

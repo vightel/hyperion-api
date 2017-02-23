@@ -1,7 +1,7 @@
 {
-  "name": "Sat-api Heroku App",
-  "description": "An API for Landsat 8 and Sentine-2A metadata",
-  "repository": "https://github.com/sat-utils/sat-api-express",
+  "name": "EO-1 Hyperion Heroku App",
+  "description": "An API for EO-1 Hyperion metadata",
+  "repository": "https://github.com/cappelaere/eo1-hyperion",
   "logo": "https://avatars1.githubusercontent.com/u/17984994?v=3&s=200",
-  "keywords": ["node", "express", "satellites", "landsat", "sentinel"]
+  "keywords": ["node", "express", "satellites", "eo1"]
 }

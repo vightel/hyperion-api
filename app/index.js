@@ -5,6 +5,8 @@ var bodyParser = require('body-parser');
 var compression = require('compression');
 var api = require('sat-api-lib');
 var app = express();
+var https = require("https");
+var request=require('request');
 
 var search = function (action, req, res) {
   var s = new api(req);
@@ -223,28 +225,52 @@ app.use(function(err, req, res, next) {
  */
 
 app.get('/', function(req, res) {
-  search('simple', req, res);
+  search('eo1', req, res);
 });
 
 app.post('/', function (req, res) {
-  search('simple', {query: req.body}, res);
+  search('eo1', {query: req.body}, res);
 });
 
+function getDevelopmentSeed(sat, req,res) {
+	var url = "https://api.developmentseed.org/satellites/"+sat
+	if( Object.keys(req.query).length>0){
+		url += "?"
+		for (q in req.query ) {
+			url += q + "="+ req.query[q]+"&"
+		}
+		url = url.substring(0, url.length - 1);
+	}
+  	//search('landsat', req, res);
+	request.get(url, function(err,response,body) {
+		res.send(body)
+	})
+}
+
 app.get('/landsat', function(req, res) {
-  search('landsat', req, res);
+	getDevelopmentSeed("landsat", req,res)
 });
 
 app.post('/landsat', function (req, res) {
-  search('landast', {query: req.body}, res);
+  search('landsat', {query: req.body}, res);
 });
 
 app.get('/sentinel', function(req, res) {
-  search('sentinel', req, res);
+	getDevelopmentSeed("sentinel", req,res)
 });
 
 app.post('/sentinel', function (req, res) {
   search('sentinel', {query: req.body}, res);
 });
+
+app.get('/eo1', function(req, res) {
+  search('eo1', req, res);
+});
+
+app.post('/eo1', function (req, res) {
+  search('eo1', {query: req.body}, res);
+});
+
 
 app.get('/count', function(req, res) {
   search('count', req, res);
