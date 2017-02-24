@@ -1,0 +1,430 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "This is the API definition for the Hyperion Archive",
+		"version": "1.0.0",
+		"title": "Hyperion Archive API",
+		"termsOfService": "http://hyperion-api.herokuapp.com/terms/",
+		"contact": {
+			"email": "pat@cappelaere.com"
+		},
+		"license": {
+			"name": "Apache 2.0",
+			"url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+		}
+	},
+	"host": "hyperion-api.herokuapp.com",
+	"basePath": "/",
+	"tags": [
+		{
+			"name": "eo1",
+			"description": "Hyperion Archive",
+			"externalDocs": {
+				"description": "Find out more",
+				"url": "http://swagger.io"
+			}
+		},
+		{
+			"name": "landsat",
+			"description": "Landsat-8 Archive"
+		},
+		{
+			"name": "sentinel",
+			"description": "Sentinel-2 Archive"
+		}
+	],
+	"schemes": [
+		"http"
+	],
+	"paths": {
+		"/eo1": {
+			"get": {
+				"tags": [
+					"eo1"
+				],
+				"summary": "list eo1 hyperion scenes",
+				"description": "",
+				"operationId": "getEO1Scene",
+				"consumes": [
+					"application/json",
+					"application/xml"
+				],
+				"produces": [
+					"application/xml",
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "scene_id",
+						"in": "query",
+						"description": "EO-1 scene id with optional wildcard characters",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "limit",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"description": "Result page to view",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "skip",
+						"in": "query",
+						"description": "Result to skip in return",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "fields",
+						"in": "query",
+						"description": "list of comma delimited fields to return",
+						"type": "string",
+						"required": false
+					},
+					{
+						"name": "cloud_from",
+						"in": "query",
+						"description": "cloud coverage from",
+						"default": 0,
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "cloud_to",
+						"in": "query",
+						"description": "cloud coverage from",
+						"default": 0,
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "intersects",
+						"in": "query",
+						"description": "Valid GeoJSON, returns results that touch any point of the geometry.",
+						"type": "string",
+						"required": false
+					}
+					
+					
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"405": {
+						"description": "Invalid input"
+					}
+				}
+			},
+		},
+        "/eo1/process": {
+			"get": {
+				"tags": [
+					"eo1"
+				],
+				"summary": "process eo1 hyperion scenes on server side",
+				"description": "",
+				"operationId": "processEO1Scene",
+				"consumes": [
+					"application/json",
+					"application/xml"
+				],
+				"produces": [
+					"application/xml",
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "scene_id",
+						"in": "query",
+						"description": "EO-1 scene id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "algorithm",
+						"in": "query",
+						"description": "algorithm",
+						"type": "integer",
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"405": {
+						"description": "Invalid input"
+					}
+				}
+			},
+        }
+		"/landsat": {
+			"get": {
+				"tags": [
+					"landsat"
+				],
+				"summary": "Gets Landsat-8 scenes",
+				"description": "Gets Landsat-8 scenes",
+				"operationId": "getLandsatScene",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "scene_id",
+						"in": "query",
+						"description": "EO-1 scene id with optional wildcard characters",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "limit",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"description": "Result page to view",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "skip",
+						"in": "query",
+						"description": "Result to skip in return",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "fields",
+						"in": "query",
+						"description": "list of comma delimited fields to return",
+						"type": "string",
+						"required": false
+					},
+					{
+						"name": "cloud_from",
+						"in": "query",
+						"description": "cloud coverage from",
+						"default": 0,
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "cloud_to",
+						"in": "query",
+						"description": "cloud coverage from",
+						"default": 0,
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "intersects",
+						"in": "query",
+						"description": "Valid GeoJSON, returns results that touch any point of the geometry.",
+						"type": "string",
+						"required": false
+					}
+					
+					
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"405": {
+						"description": "Invalid input"
+					}
+				}
+			}
+		},
+		"/sentinel": {
+			"get": {
+				"tags": [
+					"sentinel"
+				],
+				"summary": "Get Sentinel-2 scene",
+				"description": "Get Sentinel-2 scene",
+				"operationId": "getSentinelScene",
+				"produces": [
+					"application/xml",
+					"application/json"
+				],
+				"parameters": [
+					{
+						"name": "scene_id",
+						"in": "query",
+						"description": "EO-1 scene id with optional wildcard characters",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "limit",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"description": "Result page to view",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "skip",
+						"in": "query",
+						"description": "Result to skip in return",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "fields",
+						"in": "query",
+						"description": "list of comma delimited fields to return",
+						"type": "string",
+						"required": false
+					},
+					{
+						"name": "cloud_from",
+						"in": "query",
+						"description": "cloud coverage from",
+						"default": 0,
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "cloud_to",
+						"in": "query",
+						"description": "cloud coverage from",
+						"default": 0,
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "intersects",
+						"in": "query",
+						"description": "Valid GeoJSON, returns results that touch any point of the geometry.",
+						"type": "string",
+						"required": false
+					}
+					
+					
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"405": {
+						"description": "Invalid input"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"EO1": {
+			"type": "object",
+			"properties": {
+				"scene_id": {
+					"type": "string"
+				},
+				"satellite_name": {
+					"type": "string"
+				},
+				"cloud_coverage": {
+					"type": "integer"
+				},
+				"date": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"thumbnail": {
+					"type": "string"
+				},
+				"data_geometry": {
+					"type": "json"
+				}
+			}
+		},
+		"Landsat8": {
+			"type": "object",
+			"properties": {
+				"scene_id": {
+					"type": "string"
+				},
+				"satellite_name": {
+					"type": "string"
+				},
+				"cloud_coverage": {
+					"type": "integer"
+				},
+				"date": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"thumbnail": {
+					"type": "string"
+				},
+				"data_geometry": {
+					"type": "json"
+				}
+			}
+		},
+		"Sentinel2": {
+			"type": "object",
+			"properties": {
+				"scene_id": {
+					"type": "string"
+				},
+				"satellite_name": {
+					"type": "string"
+				},
+				"cloud_coverage": {
+					"type": "integer"
+				},
+				"date": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"thumbnail": {
+					"type": "string"
+				},
+				"data_geometry": {
+					"type": "json"
+				}
+			},
+			"xml": {
+				"name": "User"
+			}
+		},
+		"ApiResponse": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"type": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
