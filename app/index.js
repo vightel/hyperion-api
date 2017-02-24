@@ -285,6 +285,10 @@ app.get('/eo1', function(req, res) {
   search('eo1', req, res);
 });
 
+app.get('/eo1/process', function(req, res) {
+  res.send("NOT IMPLEMENTED YET")
+});
+
 //app.post('/eo1', function (req, res) {
 //  search('eo1', {query: req.body}, res);
 //});
