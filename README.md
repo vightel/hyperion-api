@@ -15,6 +15,12 @@ To populate it with Landsat and Sentinel metadata refer to [landsat8-metadata](h
     $ npm install
     $ node app/index.js
 
+### Environment Variables
+ES_HOST
+ES_PORT
+NAME
+WEBSITE
+
 ### About
 Hyperion-api was tweaked by Pat Cappelaere for NASA GSFC
 Original Sat API Express was made by [Development Seed](http://developmentseed.org).

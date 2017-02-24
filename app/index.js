@@ -7,6 +7,7 @@ var api = require('sat-api-lib');
 var app = express();
 var https = require("https");
 var request=require('request');
+var engines = require('consolidate');
 
 var search = function (action, req, res) {
   var s = new api(req);
@@ -32,9 +33,21 @@ app.use(function(err, req, res, next) {
 
   res.status(err.status).send({details: err.body.slice(0, 100).toString()});
 });
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, api_key, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS");
+  next();
+});
 /*----------------------------------
 // END MIDDLEWARES
 ----------------------------------*/
+app.use(express.static('public'))
+
+app.set('views', __dirname + './../views');
+app.engine('html',  require('ejs').renderFile);
+app.set('view engine', 'html');
 
 /*----------------------------------
 // START ENDPOINTS
@@ -225,12 +238,17 @@ app.use(function(err, req, res, next) {
  */
 
 app.get('/', function(req, res) {
-  search('eo1', req, res);
+  //search('eo1', req, res);
+  res.redirect("/dist/index.html")
 });
 
-app.post('/', function (req, res) {
-  search('eo1', {query: req.body}, res);
+app.get('/api', function(req, res) {
+  res.redirect("/dist/index.html")
 });
+
+//app.post('/', function (req, res) {
+//  search('eo1', {query: req.body}, res);
+//});
 
 function getDevelopmentSeed(sat, req,res) {
 	var url = "https://api.developmentseed.org/satellites/"+sat
@@ -251,25 +269,25 @@ app.get('/landsat', function(req, res) {
 	getDevelopmentSeed("landsat", req,res)
 });
 
-app.post('/landsat', function (req, res) {
-  search('landsat', {query: req.body}, res);
-});
+//app.post('/landsat', function (req, res) {
+//  search('landsat', {query: req.body}, res);
+//});
 
 app.get('/sentinel', function(req, res) {
 	getDevelopmentSeed("sentinel", req,res)
 });
 
-app.post('/sentinel', function (req, res) {
-  search('sentinel', {query: req.body}, res);
-});
+//app.post('/sentinel', function (req, res) {
+//  search('sentinel', {query: req.body}, res);
+//});
 
 app.get('/eo1', function(req, res) {
   search('eo1', req, res);
 });
 
-app.post('/eo1', function (req, res) {
-  search('eo1', {query: req.body}, res);
-});
+//app.post('/eo1', function (req, res) {
+//  search('eo1', {query: req.body}, res);
+//});
 
 
 app.get('/count', function(req, res) {
@@ -280,9 +298,9 @@ app.get('/geojson', function(req, res) {
   search('geojson', req, res);
 });
 
-app.post('/geojson', function(req, res) {
-  search('geojson', {query: req.body}, res);
-});
+//app.post('/geojson', function(req, res) {
+//  search('geojson', {query: req.body}, res);
+//});
 
 app.get('/health', function(req, res) {
   search('health', req, res);

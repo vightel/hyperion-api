@@ -3,5 +3,5 @@
   "description": "An API for EO-1 Hyperion metadata",
   "repository": "https://github.com/cappelaere/eo1-hyperion",
   "logo": "https://avatars1.githubusercontent.com/u/17984994?v=3&s=200",
-  "keywords": ["node", "express", "satellites", "eo1"]
+  "keywords": ["node", "express", "satellites", "eo1", "landsat", "sentinel"]
 }
