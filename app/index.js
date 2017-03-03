@@ -10,13 +10,35 @@ var request=require('request');
 var engines = require('consolidate');
 
 var search = function (action, req, res) {
-  var s = new api(req);
-  s[action](function (err, resp) {
-    if (err) {
-      return res.status(400).send({details: err.message});
-    }
-    return res.send(resp);
-  });
+	var s = new api(req);
+	s[action](function (err, resp) {
+		if (err) {
+			return res.status(400).send({details: err.message});
+		}
+		try {
+			var features = []
+			for( var r in resp.results ) {
+				var result = resp.results[r]
+				var feature = {
+					'type': 'Feature',
+					'properties': {},
+					'geometry': result.data_geometry
+				}
+				delete result.data_geometry
+				var keys = Object.keys(result)
+				for( var k in keys) { 
+					feature.properties[keys[k]] = result[keys[k]]
+				}
+				features.push(feature)
+			}
+			resp.type 		= 'FeatureCollection'
+			resp.features 	= features
+			delete resp.results
+			return res.send(resp);
+		} catch(e) {
+			console.log(e)
+		}
+	});
 };
 
 /*----------------------------------
@@ -36,7 +58,7 @@ app.use(function(err, req, res, next) {
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, api_key, Authorization");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Accept, api_key, Authorization");
   res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS");
   next();
 });

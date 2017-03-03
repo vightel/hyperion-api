@@ -123,7 +123,7 @@
 						"description": "Invalid input"
 					}
 				}
-			},
+			}
 		},
         "/eo1/process": {
 			"get": {
@@ -165,8 +165,8 @@
 						"description": "Invalid input"
 					}
 				}
-			},
-        }
+			}
+        },
 		"/landsat": {
 			"get": {
 				"tags": [
@@ -237,8 +237,6 @@
 						"type": "string",
 						"required": false
 					}
-					
-					
 				],
 				"responses": {
 					"200": {
@@ -321,8 +319,6 @@
 						"type": "string",
 						"required": false
 					}
-					
-					
 				],
 				"responses": {
 					"200": {
