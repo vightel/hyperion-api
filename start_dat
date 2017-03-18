@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -eo pipefail
+cd $DAT_PATH
+
+if [ -d "$DAT_PATH/.dat" ]
+then
+	dat share
+else
+	dat create $DAT_PATH
+fi

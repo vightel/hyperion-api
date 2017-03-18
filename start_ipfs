@@ -1,0 +1,34 @@
+#!/bin/bash
+echo "Starting IPFS..."
+
+user=$(whoami)
+repo=$IPFS_PATH
+
+# Test whether the mounted directory is writable for us
+if [ ! -w $repo 2>/dev/null ]; then
+  echo "error: $repo is not writable for user $user (uid=$(id -u $user))"
+  exit 1
+fi
+
+ipfs version
+
+if [ -e $repo/config ]; then
+  echo "Found IPFS repo at $repo"
+else
+	echo "Initializing IPFS..."
+	ipfs init
+fi
+
+#  ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
+#  ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
+#  ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+#  ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
+
+if (( $(ps -ef | grep -v grep | grep "ipfs daemon" | wc -l) > 0 ))
+then
+    echo "ipfs is running"
+else
+	echo "Starting IPFS daemon..."
+    /usr/local/bin/ipfs daemon
+fi
+

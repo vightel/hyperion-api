@@ -1,0 +1,17 @@
+FROM node
+MAINTAINER Andrew Lawson <http://adlawson.com>
+
+ADD ./start_dat /usr/local/bin/start_dat
+RUN chmod 777 /usr/local/bin/start_dat
+
+ENV DAT_PATH /data/hyperion
+
+VOLUME $DAT_PATH
+
+ENV SHELL /bin/bash
+
+EXPOSE 6461
+RUN npm install -g dat
+
+ENTRYPOINT ["start_dat"]
+CMD []

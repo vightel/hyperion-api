@@ -1,0 +1,23 @@
+#
+# EO-1 Archive API DockerFile for one-click deploy
+#
+# Pat Cappelaere Vightel
+# pat@cappelaere.com
+#
+
+FROM node:4-onbuild
+
+MAINTAINER Pat Cappelaere <pat@cappelaere.com>
+
+EXPOSE 8000
+
+RUN mkdir /app /app/user
+WORKDIR   /app/user
+
+COPY app 				/app/user/app
+COPY public				/app/user/public
+COPY Procfile           /app/user
+COPY package.json       /app/user
+COPY README.md          /app/user
+
+RUN npm install

@@ -24,3 +24,42 @@ WEBSITE
 ### About
 Hyperion-api was tweaked by Pat Cappelaere for NASA GSFC
 Original Sat API Express was made by [Development Seed](http://developmentseed.org).
+
+
+# Platform as a Service (Paas) with Docker / CONVOX
+
+We are using CONVOX for deployment to AWS and Docker containers
+
+## Docker Deployment using Convox
+$ convox login console.convox.com
+$ convox apps create
+
+## Start locally
+convox start
+
+## Stop locally
+docker ps
+docker stop <ID>
+	
+## Deploy to AWS
+convox deploy
+
+### scaling
+$ convox scale web --count=2
+$ convox scale ipfs --count=1
+// $ convox rack scale --type=m3.large --count=4
+
+#### Debugging
+$ convox ps
+$ convox exec <ID> bash
+$ convox instances
+
+## Checking/Cleaning docker images
+> docker images
+
+Clean Docker
+> docker rm -v $(docker ps -a -q -f status=exited)
+
+> docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")
+	
+> docker rmi $(docker images -f "dangling=true" -q)

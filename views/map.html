@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>  
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Search</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+ 	<!--
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+	-->
+		
+  </head>
+  <body>
+	  <h2>GeoQuery</h2>
+	  <hr/>
+	  <div id='map' style='width: 1200px; height: 800px;'></div>
+	  <br/>
+	  <div id='query'></div>
+	  <br/>
+	  <div class='well' id="results">
+	  </div>
+	  
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>	
+   
+   <!--
+	   <script src="js/plugins.js"></script>
+	   <script src="js/main.js"></script>
+	-->
+
+	   <script src='https://api.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.js'></script>
+	   <link href='https://api.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.css' rel='stylesheet' />		
+	   <script>
+		
+//
+//Length	Cell width	Cell height
+//	1	 	≤ 5,000km	×	5,000km
+//	2	 	≤ 1,250km	×	625km
+//	3		≤ 156km		×	156km
+//	4		≤ 39.1km	×	19.5km
+//	5		≤ 4.89km	×	4.89km
+//	6		≤ 1.22km	×	0.61km
+//	7		≤ 153m	×	153m
+//	8		≤ 38.2m	×	19.1m
+//	9		≤ 4.77m	×	4.77m
+//	10		≤ 1.19m	×	0.596m
+//	11		≤ 149mm	×	149mm
+//	12		≤ 37.2mm	×	18.6mm
+		
+		
+		var ZOOMLEVELS = { 3: 7, 4 : 10, 5 : 12, 6 : 15, 7 : 17, 8 : 17 };
+		
+		var zoomToGeoHashPrecision = {
+			0: 1,
+			1: 2,
+			2: 2,
+			3: 2,
+			4: 3,
+			5: 3,
+			6: 4,
+			7: 4,
+			8: 4,
+			9: 5,
+			10: 5,
+			11: 6,
+			12: 6,
+			13: 6,
+			14: 7,
+			15: 7,
+			16: 7,
+			17: 7,
+			18: 7,
+			19: 7,
+			20: 7,
+			21: 7
+		};
+		 
+		mapboxgl.accessToken = 'pk.eyJ1IjoiY2FwcGVsYWVyZSIsImEiOiJxSjM5MEt3In0.9PYNJ8PzRclvtEh1jkqBuA';
+		var map = new mapboxgl.Map({
+		    container: 'map',
+		    style: 'mapbox://styles/mapbox/streets-v9',
+			center: [-68, 40], // starting position
+			zoom: 4,
+			minZoom: 2,
+			maxZoom: 18
+		});
+		
+		var query_json= {
+			'type':"FeatureCollection",
+			'features': []
+		}
+		
+		map.on('zoom', function() {
+			//console.log("zoom level", map.getZoom())
+		})
+				
+		map.on('load', function() {
+			map.addSource('query', {
+			    'type': 'geojson',
+				'data': query_json
+			})
+			map.addLayer({
+				'id': 		'query',
+				'type': 	'fill',
+				'source': 	'query',
+				'layout': 	{},
+				'paint': {
+					'fill-color': {
+						'property': 'value',
+						"stops": [
+							[0, 'red'],
+							[1, 'green']
+						]
+					},
+					'fill-opacity': 0.2
+				}
+			})
+		})
+		
+		function AddTile(e, onoff) {
+			var lnglat 	= e.lngLat
+			var lng		= lnglat.lng
+			var lat		= lnglat.lat
+			var zoom	= parseInt(map.getZoom())
+			console.log(lat, lng, zoom)
+			
+			var tile 	= pointToTile(lng, lat, zoom+1);
+			var quadKey	= tileToQuadkey(tile)
+			var bbox	= tileToBBOX(tile)
+			console.log(bbox)
+			
+			var geom	= tileToGeoJSON(tile)
+			var feature	= {
+				"properties": {
+					"quadkey": quadKey,
+					"value": 0
+				},
+				"type": "Feature",
+				"geometry": geom
+			}
+			
+			query_json.features[0] = feature
+			
+			//$('#query').html("query bbox:"+JSON.stringify(bbox))
+			
+			var url='/geoquery?bbox='+bbox.join(",")
+			//console.log(url)
+
+			var html = "Sorry! No Results<br/>"
+			
+			$.getJSON(url, function(data) {
+				if( data ) {
+					var features = data.features
+					
+					html = "<b>Results:</b> " + features.length + "<br/><br/>"
+					
+					for( var f in features ) {
+						var feature = features[f]
+						feature.properties.value = 1
+						if(feature.geometry.crs) delete feature.geometry.crs
+						if(feature.geometry.type == "polygon") feature.geometry.type="Polygon"
+						query_json.features.push( feature)
+						
+						html += "<a href='/search/"+feature.properties.scene_id+"'>"+feature.properties.scene_id +"</a><br/>"
+					}
+				}
+		        map.getSource('query').setData(query_json);
+				$('#results').html(html)
+			})
+		}
+		
+		
+		map.on('click', function (e) {
+			AddTile(e, 1)
+		})
+		
+		</script>
+		
+		<!--
+		<script src='js/geohash.js'></script>
+		-->
+		<script src='js/tilebelt.js'></script>
+  </body>
+</html>

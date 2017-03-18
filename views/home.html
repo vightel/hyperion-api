@@ -1,0 +1,53 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>L1U Prototype</title>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+</head>
+<body>
+	<div class='well'>
+	<h1>Hyperion Co-registered Surface Reflectance</h1>
+	
+	<h3><a href='/search'>Search</a></h3>
+	<h3><a href='/api'>API</a></h3>
+	</div>
+</hr>
+	<div class='container'>
+	<h2>Summary</h2>
+	This data set contains hyperspectral surface reflectance images collected by the EO-1 satellite Hyperion sensor at 30-m resolution and covering the entire globe 2002 - 2017. All images were converted to GeoTiff format for distribution. The respective ENVI *.hdr files are included as companion files and contain image projection and band information.
+	<br/>
+	The images were processed using ENVI software as described in Chambers et al. (2009). Bands with uncalibrated wavelengths and those with low spectral response were removed leaving a spectral subset of generally 196 bands (some images have fewer). A cloud mask was developed using 2-d scatter plots of variable reflectance bands to highlight clouds as regions of interest (ROIs), allowing clouds and cloud edges to be masked. A de-streaking algorithm was then applied to the image to reduce variance in balance between the vertical columns.  Apparent surface reflectance was calculated for this balanced image using the atmospheric correction algorithm ACORN in 1.5pb mode (AIG-LLC, Boulder, CO).  The images (18 of the 20) were georeferenced using the corresponding Advanced Land Imager (ALI) satellite images.
+	
+	<h2>Data Citation</h2>
+	Cite this data set as follows:
+	<br/>
+	GSFC Code 610 2017.  Hyperion 30-m Surface Reflectance, Global 2002-2017. Data set. Available on-line [http://gsfc.nasa.gov] from NASA Goddard, Greenbelt, U.S.A.
+	</pre>
+	
+	<br/>
+	<h3>Table of Contents</h3>
+	<ul>
+		<li>Data Set Overview</li>
+		<li>Data Characteristics</li>
+		<li>Data Application & Derivation</li>
+		<li>Quality Assessment</li>
+		<li>Data Acquisition Materials and Methods</li>
+		<li>Data Access</li>
+		<li>References</li>
+	</ul>	
+	</div>
+</body>
+</html>

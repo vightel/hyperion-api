@@ -1,0 +1,42 @@
+web:
+    build: .
+    dockerfile: DockerFile-Node
+    working_dir: /app/user
+    expose: 
+        - '8000'
+    environment:
+        - NODE_ENV= 'production'
+        - PORT=     8000
+        - NAME=     'hyperion-api'
+        - WEBSITE=  'hyperion-api.herokuapp.com'
+        - ES_HOST=  'search-hyperion-qhtb3htgk4zlo33aajnfpgud5i.us-east-1.es.amazonaws.com'
+        - ES_PORT=  '80'
+    ports:
+        - '80:8000'
+    command:  node app/index.js 
+        
+ipfs:
+  build: .
+  dockerfile: DockerFile-IPFS
+  working_dir: /app/user
+  expose: 
+    - '4001'
+    - '4002/udp'
+    - '5001'
+    - '8080'
+  volumes:
+    - /data/hyperion
+    - /data/ipfs
+  environment:
+    - HYPERION_DATA_DIR = /data/hyperion
+
+dat:
+  build: .
+  dockerfile: DockerFile-DAT
+  working_dir: /app/user
+  expose: 
+    - '6461'
+  volumes:
+    - /data/hyperion
+  environment:
+    - DAT_PATH = /data/hyperion

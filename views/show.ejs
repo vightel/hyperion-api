@@ -1,0 +1,104 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Show</title>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+</head>
+<body>
+	<div class='container'>
+		<h2>Show</h2>
+		<hr/>
+		
+		
+		<input type="hidden" id="show" value='<%=id %>'>
+		  
+		<div id='results' class='container responsive'>
+			
+		</div>
+	</div>
+	
+<script>
+	function Search(value) {
+		//console.log("searching...", value)
+		$.get("/eo1?scene_id="+value+"&limit=10", function(data) {
+			//console.log(data)
+			var html = ""
+			for( var f in data.features ) {
+				var feature = data.features[f]
+				//console.log(JSON.stringify(feature))
+				html += "<div class='well col-md-6' >"
+				html += "<table><tr><td width='40'>"
+				html += "<a href='" + feature.properties.thumbnail +"'>"
+				html += "<img src='"+feature.properties.thumbnail+"' class='thumbnail' height='300'/></a> </td>"
+				html += "<td><table class=''>"
+				html += "<tr><td width='80'>Product</td><td>"
+				html += feature.properties.satellite_name +" &nbsp;"
+				html += feature.properties.instrument +" &nbsp;"
+				html += feature.properties.level +" &nbsp;"
+				html += "</td></tr>"
+				html += "<tr><td>Scene</td><td>" 
+				html += feature.properties.scene_id +"</td></tr>"
+				html += "<tr><td>Date</td><td>" 
+				html += feature.properties.date +"</td></tr>"
+				html += "<tr><td>Attribution</td><td>"
+				html += feature.properties.attribution +"</td></tr>"
+				html += "<tr><td>Source</td><td>" 
+				html += feature.properties.source +"</td></tr>"
+				html += "<tr><td>License</td><td>" 
+				html += feature.properties.license +"</td></tr>"
+				html += "<tr><td>Metadata</td><td>"
+				html += "<a href='" +feature.properties.metadata +"'>metadata</a></td></tr>"
+				
+				html += "<tr><td>Actions</td><td>"
+				html += "<a href='/download/" +feature.properties.scene_id + "_" + feature.properties.level +"'>Download</a><br/>"
+				html += "<a href='/process/" +feature.properties.scene_id + "_" + feature.properties.level +"'>Process</a><br/>"
+				html += "</td></tr>"
+				
+				html += "</tr></table>"
+				html += "</td></tr></table><br/>"
+
+				html += "<div id='disqus_thread'></div>"
+				
+				html += "</div>"
+			}
+			$("#results").html(html)
+		})
+	}
+	
+	var val = $('#show').val()
+	if( val ) {
+		Search(val)
+	}
+</script>
+	
+	<script>
+	var disqus_config 	= function () {
+	this.page.url 		= "<%= url %>";  	
+	this.page.identifier = '<%= id %>'; 	
+	};
+	
+	(function() { // DON'T EDIT BELOW THIS LINE
+	var d = document, s = d.createElement('script');
+	s.src = 'https://hyperion-l1u.disqus.com/embed.js';
+	s.setAttribute('data-timestamp', +new Date());
+	(d.head || d.body).appendChild(s);
+	})();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	
+	
+</body>
+</html>
