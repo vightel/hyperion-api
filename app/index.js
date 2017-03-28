@@ -1,97 +1,27 @@
 require('envloader').load();
-var express = require('express');
-var cors = require('cors');
-var bodyParser = require('body-parser');
-var compression = require('compression');
-var api = require('sat-api-lib');
-var app = express();
-var https = require("https");
-var request=require('request');
-var engines = require('consolidate');
-
-var geoquery = function (action, req, res) {
-	var bbox = req.query['bbox'].split(',')
-	console.log("geoquery", bbox)
-	
-	var query = {
-		method: "GET",
-		query: {
-			intersects:{
-				type: "FeatureCollection",
-				features: [
-					{
-						type: "Feature",
-						properties: {},
-						geometry: {
-							type: "Polygon",
-							coordinates: [
-								[
-									[bbox[0], bbox[1]],
-									[bbox[0], bbox[3]],
-									[bbox[2], bbox[3]],
-									[bbox[2], bbox[1]],
-									[bbox[0], bbox[1]]
-								]
-							]
-						}
-					}
-				]
-			}
-		}
-	} 
-	console.log(query)
-	
-	var s = new api(query);
-	s.satelliteName = 'eo1';
-	s.geojson(function(err, response) {
-		console.log(err, response)
-		if( !err) {
-			res.send(response)
-		} else {
-			console.log("geoquery Error", err)
-			res.sendStatus(500)
-		}
-	})	
-}
-
-var search = function (action, req, res) {
-	var s = new api(req);
-	s[action](function (err, resp) {
-		if (err) {
-			return res.status(400).send({details: err.message});
-		}
-		try {
-			var features = []
-			for( var r in resp.results ) {
-				var result = resp.results[r]
-				var feature = {
-					'type': 'Feature',
-					'properties': {},
-					'geometry': result.data_geometry
-				}
-				delete result.data_geometry
-				var keys = Object.keys(result)
-				for( var k in keys) { 
-					feature.properties[keys[k]] = result[keys[k]]
-				}
-				features.push(feature)
-			}
-			resp.type 		= 'FeatureCollection'
-			resp.features 	= features
-			delete resp.results
-			return res.send(resp);
-		} catch(e) {
-			console.log(e)
-		}
-	});
-};
+var express 		= require('express');
+var cors 			= require('cors');
+var bodyParser 		= require('body-parser');
+var compression 	= require('compression');
+var app 			= express();
+var https 			= require("https");
+var request			= require('request');
+var engines 		= require('consolidate');
+var elastic_search 	= require('./search.js');
+var processing 		= require('./process.js');
+var slack 			= require('./slack.js');
 
 /*----------------------------------
 // START MIDDLEWARES
 ----------------------------------*/
 app.use(cors());
 app.use(compression())
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }))
+
 app.use(bodyParser.json({ type: 'application/json' })); // for parsing application/json
+
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   if (err.status === 400 && err.name === 'SyntaxError' && err.body) {
@@ -189,82 +119,43 @@ app.get('/download/:id', function(req, res) {
 
 });
 
+app.get('/map/:id', function(req, res) {
+	var id 		= req.params['id']
+	var url		= req.protocol + '://' + req.get('host') + req.originalUrl;	
+	res.render("show_map.ejs", {
+		id: id,
+		url: url
+  	})
+});
+
 app.get('/map', function(req, res) {
-  //search('eo1', req, res);
-  res.render("map.html")
+	res.render("map.html")
 });
 
 app.get('/api', function(req, res) {
-  res.redirect("/dist/index.html")
+	res.redirect("/dist/index.html")
 });
 
-app.get('/geoquery', function(req, res) {
-    geoquery('eo1', req, res);
-});
-
-//app.post('/', function (req, res) {
-//  search('eo1', {query: req.body}, res);
-//});
-
-function getDevelopmentSeed(sat, req,res) {
-	var url = "https://api.developmentseed.org/satellites/"+sat
-	if( Object.keys(req.query).length>0){
-		url += "?"
-		for (q in req.query ) {
-			url += q + "="+ req.query[q]+"&"
-		}
-		url = url.substring(0, url.length - 1);
-	}
-  	//search('landsat', req, res);
-	request.get(url, function(err,response,body) {
-		res.send(body)
+app.get('/slack-app', function(req, res) {
+	res.render("slack.ejs", {
+		
 	})
-}
-
-app.get('/landsat', function(req, res) {
-	getDevelopmentSeed("landsat", req,res)
 });
 
-//app.post('/landsat', function (req, res) {
-//  search('landsat', {query: req.body}, res);
-//});
+app.get('/geoquery', 		elastic_search.eo1_geoquery);
+app.get('/landsat', 		elastic_search.landsat_query);
+app.get('/sentinel', 		elastic_search.sentinel_query);
+app.get('/eo1', 			elastic_search.eo1_query);
+app.get('/eo1/process', 	processing.index);
+app.get('/count', 			elastic_search.count);
+app.get('/geojson', 		elastic_search.geojson);
+app.get('/health', 			elastic_search.health);
+app.post('/slack', 			elastic_search.eo1_slack);
+app.post('/slack/actions', 	slack.actions);
+app.get('/slack/oauth', 	slack.oauth);
+app.get('/slacksearch/:id', slack.search);
+app.get('/slack/:id', 		slack.postMessage);
 
-app.get('/sentinel', function(req, res) {
-	getDevelopmentSeed("sentinel", req,res)
-});
-
-//app.post('/sentinel', function (req, res) {
-//  search('sentinel', {query: req.body}, res);
-//});
-
-app.get('/eo1', function(req, res) {
-  search('eo1', req, res);
-});
-
-app.get('/eo1/process', function(req, res) {
-  res.send("NOT IMPLEMENTED YET")
-});
-
-//app.post('/eo1', function (req, res) {
-//  search('eo1', {query: req.body}, res);
-//});
-
-
-app.get('/count', function(req, res) {
-  search('count', req, res);
-});
-
-app.get('/geojson', function(req, res) {
-  search('geojson', req, res);
-});
-
-//app.post('/geojson', function(req, res) {
-//  search('geojson', {query: req.body}, res);
-//});
-
-app.get('/health', function(req, res) {
-  search('health', req, res);
-});
 /*----------------------------------
 // END ENDPOINTS
 ----------------------------------*/

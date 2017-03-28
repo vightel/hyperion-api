@@ -26,6 +26,7 @@
     "envloader": "0.0.3",
     "express": "^4.13.4",
     "filesize": "^3.5.6",
+    "moment": "^2.18.1",
     "request": "^2.79.0",
     "sat-api-lib": "git://github.com/vightel/sat-api-lib"
   },

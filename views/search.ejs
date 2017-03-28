@@ -39,13 +39,13 @@
 	function Search(value) {
 		//console.log("searching...", value)
 		$.get("/eo1?scene_id="+value+"&limit=10", function(data) {
-			//console.log("Results", JSON.stringify(data))
+			console.log("Results", JSON.stringify(data))
 			var html = "found: " + data.meta.found + "<br/>"
 			for( var f in data.features ) {
 				var feature = data.features[f]
 				//console.log(JSON.stringify(feature))
 				html += "<div class='well col-md-6' >"
-				html += "<table><tr><td width='40'>"
+				html += "<table><tr><td width='50'>"
 				html += "<a href='" + feature.properties.thumbnail +"'>"
 				html += "<img src='"+feature.properties.thumbnail+"' class='thumbnail' height='300'/></a> </td>"
 				html += "<td><table class=''>"
@@ -71,6 +71,14 @@
 				html += "<a href='/download/" +feature.properties.scene_id + "_" + feature.properties.level +"'>download</a><br/>"
 				html += "<a href='/process/" +feature.properties.scene_id + "_" + feature.properties.level +"'>process</a><br/>"
 				html += "</td></tr>"
+				
+				html += "<tr><td>Nearby</td><td>"
+				html += feature.properties.nearBy + "," + feature.properties.adminName + "</td></tr>"
+				html += "<tr><td>State, Country</td><td>"
+				html += feature.properties.adminName + ", " + feature.properties.countryName + "</td></tr>"
+				
+				html += "<tr><td>Footprints</td><td>"
+				html += "<a href='/map/" + feature.properties.scene_id + "'><i class='glyphicon glyphicon-globe'></i></a></td></tr>"
 				
 				html += "</tr></table>"
 				html += "</td></tr></table>"
