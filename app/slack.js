@@ -87,6 +87,8 @@ module.exports = {
 							}
 						})
 					}
+				} else {
+					cb(error, null)
 				}
 				}
 			} else {
