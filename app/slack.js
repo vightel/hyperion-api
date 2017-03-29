@@ -41,54 +41,55 @@ module.exports = {
 				//console.log("*",JSON.stringify(data,null,'\t'))
 				
 				// go through matches
-				if( data.messages && data.messages.matches) {
+				if( data.messages) {
 					for( var m in data.messages.matches) {
-					var match 		= data.messages.matches[m]
-					var iid			= match.iid
-					var permalink	= match.permalink
-					if( match.username == 'hyperionapp') {
-						var ts		= match.ts
-						// console.log("** match", match)
-						// we need to retrieve that messages reactions from history
-						var url 	= 'https://slack.com/api/channels.history'
-						var data_request = {
-							token: 		process.env.SLACK_OAUTH_ACCESS_TOKEN,
-							channel: 	match.channel.id,
-							latest: 	ts,
-							inclusive: 	1,
-							count:  	1
-						}
-						var options = {
-							url: 	url,
-							method: "GET",
-							qs: 	data_request
-						}
-						request(options, function (error, response, body) {
-							if (!error && response.statusCode == 200) {
-								var data = JSON.parse(body)
-								var message = data.messages[0]
-								delete message.attachments
-								message.iid 		= iid
-								message.permalink 	= permalink
-								
-								message.thumbsup	= 0
-								message.thumbsdown	= 0
-								
-								for( var r in message.reactions ) {
-									var reaction = message.reactions[r]
-									if( reaction.name == "+1") message.thumbsup 	= reaction.count
-									if( reaction.name == "-1") message.thumbsdown 	= reaction.count
-								}
-								console.log("**",JSON.stringify(message,null,'\t'))
-								cb(error, message)
-							} else {
-								console.log("channel history error", error)
-								cb(error, null)
+						var match 		= data.messages.matches[m]
+						var iid			= match.iid
+						var permalink	= match.permalink
+						if( match.username == 'hyperionapp') {
+							var ts		= match.ts
+							// console.log("** match", match)
+							// we need to retrieve that messages reactions from history
+							var url 	= 'https://slack.com/api/channels.history'
+							var data_request = {
+								token: 		process.env.SLACK_OAUTH_ACCESS_TOKEN,
+								channel: 	match.channel.id,
+								latest: 	ts,
+								inclusive: 	1,
+								count:  	1
 							}
-						})
+							var options = {
+								url: 	url,
+								method: "GET",
+								qs: 	data_request
+							}
+							request(options, function (error, response, body) {
+								if (!error && response.statusCode == 200) {
+									var data = JSON.parse(body)
+									var message = data.messages[0]
+									delete message.attachments
+									message.iid 		= iid
+									message.permalink 	= permalink
+								
+									message.thumbsup	= 0
+									message.thumbsdown	= 0
+								
+									for( var r in message.reactions ) {
+										var reaction = message.reactions[r]
+										if( reaction.name == "+1") message.thumbsup 	= reaction.count
+										if( reaction.name == "-1") message.thumbsdown 	= reaction.count
+									}
+									console.log("**",JSON.stringify(message,null,'\t'))
+									cb(error, message)
+								} else {
+									console.log("channel history error", error)
+									cb(error, null)
+								}
+							})
+						}
 					}
 				} else {
-					cb(error, null)
+					cb(null, null)
 				}
 			} else {
 				console.log(error)
