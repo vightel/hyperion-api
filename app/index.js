@@ -7,9 +7,10 @@ var app 			= express();
 var https 			= require("https");
 var request			= require('request');
 var engines 		= require('consolidate');
+
 var elastic_search 	= require('./search.js');
-var processing 		= require('./process.js');
-var slack 			= require('./slack.js');
+var processing 		= require('./process');
+var slack 			= require('./slack');
 
 /*----------------------------------
 // START MIDDLEWARES
