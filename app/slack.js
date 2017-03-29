@@ -90,7 +90,6 @@ module.exports = {
 				} else {
 					cb(error, null)
 				}
-				}
 			} else {
 				console.log(error)
 				cb(error, null)
