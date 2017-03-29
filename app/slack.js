@@ -41,7 +41,8 @@ module.exports = {
 				//console.log("*",JSON.stringify(data,null,'\t'))
 				
 				// go through matches
-				for( var m in data.messages.matches) {
+				if( data.messages && data.messages.matches) {
+					for( var m in data.messages.matches) {
 					var match 		= data.messages.matches[m]
 					var iid			= match.iid
 					var permalink	= match.permalink
@@ -86,6 +87,7 @@ module.exports = {
 							}
 						})
 					}
+				}
 				}
 			} else {
 				console.log(error)
