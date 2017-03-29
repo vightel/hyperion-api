@@ -56,22 +56,23 @@ app.get('/search', function(req, res) {
 	var id 		= null
 	var host	= req.protocol + '://' + req.get('host')
 	
-  //search('eo1', req, res);
-  res.render("search.ejs", {
-	  id: 	id,
-	  host: host
-  })
+	//search('eo1', req, res);
+	res.render("search.ejs", {
+		id: 	id,
+		host: host
+	})
 });
 
 app.get('/search/:id', function(req, res) {
 	var id 		= req.params['id']
 	var host	= req.protocol + '://' + req.get('host')
 	
-  //search('eo1', req, res);
-  res.render("search.ejs", {
-	  id: 	id,
-	  host: host
-  })
+		res.render("search.ejs", {
+			id: 	id,
+			host: host,
+			data: data
+	    })		
+	
 });
 
 app.get('/process/:id', function(req, res) {
@@ -88,10 +89,13 @@ app.get('/process/:id', function(req, res) {
 app.get('/show/:id', function(req, res) {
 	var id 		= req.params['id']
 	var url		= req.protocol + '://' + req.get('host') + req.originalUrl;	
-	res.render("show.ejs", {
-		id: id,
-		url: url
-  })
+	slack.searchPost( id, function(err, data) {
+		res.render("show.ejs", {
+			id: id,
+			url: url,
+			message: data
+		})
+	})
 });
 
 app.get('/download/:id', function(req, res) {

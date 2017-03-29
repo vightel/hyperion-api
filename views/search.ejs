@@ -83,8 +83,9 @@
 				html += "</tr></table>"
 				html += "</td></tr></table>"
 				
-				html += "<a href='<%= host %>/show/" + feature.properties.scene_id +"#disqus_thread' data-disqus-identifier='"
-				html += feature.properties.scene_id +"'> Show "+ feature.properties.scene_id +"</a>"
+				// html += "<a href='<%= host %>/show/" + feature.properties.scene_id +"#disqus_thread' data-disqus-identifier='"
+				// html += feature.properties.scene_id +"'> Show "+ feature.properties.scene_id +"</a>"
+				html += "<a href='<%= host %>/show/" + feature.properties.scene_id +"'> Show "+ feature.properties.scene_id +"</a>"
 				
 				html += "</div>"
 			}
@@ -103,6 +104,8 @@
 		Search(val)
 	}
 </script>
+<!--
 <script id="dsq-count-scr" src="https://hyperion-l1u.disqus.com/count.js" async></script>
+-->
 </body>
 </html>

@@ -16,6 +16,15 @@
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	
+	<style>
+	.rcorners2 {
+	    border-radius: 5px;
+	    border: 2px solid #73AD21;
+	    padding: 5px; 
+	    width: 50px;
+	    height: 32px; 
+	}
+	</style>
 </head>
 <body>
 	<div class='container'>
@@ -25,10 +34,15 @@
 		
 		<input type="hidden" id="show" value='<%=id %>'>
 		  
-		<div id='results' class='container responsive'>
-			
+		<div id='results' class='container responsive'></div>
+		
+		<div class='container responsive'>
+			<a href='<%= message.permalink%>'><img src='/slack-icon-10.png' width=40 /> &nbsp;
+				<span class='rcorners2 glyphicon glyphicon-comment'>&nbsp;<b><%= message.reply_count %></b></span>&nbsp;&nbsp;
+				<span class='rcorners2 glyphicon glyphicon-thumbs-up'>&nbsp;<b><%= message.thumbsup %></b></span>&nbsp;&nbsp;
+				<span class='rcorners2 glyphicon glyphicon-thumbs-down'>&nbsp;<b><%= message.thumbsdown%></b></span>&nbsp;&nbsp;&nbsp;
+			</a>	
 		</div>
-	</div>
 	
 <script>
 	function Search(value) {
@@ -83,7 +97,7 @@
 		Search(val)
 	}
 </script>
-	
+<!--
 	<script>
 	var disqus_config 	= function () {
 	this.page.url 		= "<%= url %>";  	
@@ -98,7 +112,8 @@
 	})();
 	</script>
 	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-	
+-->
 	
 </body>
 </html>
+	

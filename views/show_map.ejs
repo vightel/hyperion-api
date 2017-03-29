@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>  
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Footprints</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+ 	<!--
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+	-->
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		
+  </head>
+  <body>
+	  <h2>Footprints: <a href='/show/<%=id%>'><%= id %></a></h2>
+	  <hr/>
+	  <div id='map' style='width: 1200px; height: 800px;'></div>
+	  <br/>
+	  
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>	
+   
+   <!--
+	   <script src="js/plugins.js"></script>
+	   <script src="js/main.js"></script>
+	-->
+
+	   <script src='https://api.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.js'></script>
+	   <link href='https://api.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.css' rel='stylesheet' />		
+	   <script>
+	   var map;
+	   
+		$.get("/eo1?scene_id=<%= id %>&limit=1", function(data) {
+			var query_json= {
+				'type':"FeatureCollection",
+				'features': []
+			}
+
+			if( data ) {
+				var feature 			= data.features[0]
+				feature.geometry.type 	= "Polygon"
+				var coords				= feature.geometry.coordinates[0]
+								
+				//find center
+				var lon1				= coords[0][0]
+				var lon2				= coords[1][0]
+				var lat1				= coords[2][1]
+				var lat2				= coords[0][1]
+				
+				var lon = lon1 + (lon2-lon1)/2
+				var lat = lat1 + (lat2-lat1)/2
+				
+				data.features[0].properties.value = 0
+				
+				query_json.features = data.features
+			}
+			
+			//console.log(JSON.stringify(query_json))
+			
+			mapboxgl.accessToken = 'pk.eyJ1IjoiY2FwcGVsYWVyZSIsImEiOiJxSjM5MEt3In0.9PYNJ8PzRclvtEh1jkqBuA';
+			map = new mapboxgl.Map({
+			    container: 'map',
+			    style: 		'mapbox://styles/mapbox/streets-v9',
+				center: 	[lon, lat],
+				zoom: 		7,
+				minZoom: 	2,
+				maxZoom: 	18
+			});
+		
+		
+			map.on('zoom', function() {
+				//console.log("zoom level", map.getZoom())
+			})
+				
+			map.on('load', function() {
+				map.addSource('query', {
+				    'type': 'geojson',
+					'data': query_json
+				})
+				map.addLayer({
+					'id': 		'query',
+					'type': 	'fill',
+					'source': 	'query',
+					'layout': 	{},
+					'paint': {
+						'fill-color': {
+							'property': 'value',
+							"stops": [
+								[0, 'red'],
+								[1, 'green']
+							]
+						},
+						'fill-opacity': 0.2
+					}
+				})
+			})
+		})
+		</script>
+  </body>
+</html>
