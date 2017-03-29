@@ -39,6 +39,7 @@
 		  
 		<div id='results' class='container responsive'></div>
 		
+		<% if( message ) {%>
 		<div class='container responsive'>
 			<a href='<%= message.permalink%>'><img src='/slack-icon-10.png' width=40 /> &nbsp;
 				<span class='rcorners2 glyphicon glyphicon-comment'>&nbsp;<b><%= message.reply_count %></b></span>&nbsp;&nbsp;
@@ -46,6 +47,7 @@
 				<span class='rcorners2 glyphicon glyphicon-thumbs-down'>&nbsp;<b><%= message.thumbsdown%></b></span>&nbsp;&nbsp;&nbsp;
 			</a>	
 		</div>
+		<%}%>
 	
 <script>
 	function Search(value) {
