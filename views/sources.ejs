@@ -1,0 +1,69 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Download</title>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		
+		<!--
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		-->
+			
+	<script src='/js/filesize.js'></script>
+	
+</head>
+<body>
+	<div class='container'>
+		<h2>
+			<a href='/'><img src='/favicon-32x32.png'>&nbsp;</a>
+			Sources for: <%= scene_id %>
+		</h2>
+		<hr/>
+		
+		<input type="hidden" id="show" value='<%=id %>'>
+		  
+		<div id='results' class='container responsive'>
+		</div>
+		<br/>
+		
+		<h4>Sources</h4>
+		<div id='sources' class='container responsive'>
+		</div>
+	</div>
+	
+<script>
+	var sources = <%- JSON.stringify(sources, null, "\t") %>
+	console.log(sources)
+	var dhtml = "<table class='table-condensed'>"
+
+	for( var s in sources ) {
+		var source 		= sources[s]
+		var metadata 	= source.downloads.METADATA.href
+		var basename_a	= metadata.split("/")
+		var basename	= basename_a[basename_a.length-1]
+		var href		= "/source/"+basename
+		
+		dhtml += "<tr><td>"+ source.attribution + " " + source.description + " "
+		dhtml += "<a href='"+href+"'>"+basename+"</a>"
+		dhtml += "</td></tr>"
+	}
+	dhtml += "</table>"
+	
+	$("#sources").html(dhtml)
+</script>
+	
+	
+</body>
+</html>

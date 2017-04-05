@@ -99,19 +99,85 @@ app.get('/show/:id', function(req, res) {
 	})
 });
 
-app.get('/download/:id', function(req, res) {
+app.get('/sources/:id', function(req, res) {
 	var id 		= req.params['id']
 	var url		= req.protocol + '://' + req.get('host') + req.originalUrl;	
-	var scene	= id.split("_")[0]
+	var arr		= id.split("_")
+	var scene	= arr[0]
+	var level	= arr[1]
 	var year	= scene.substring(10,14)
 	var doy		= scene.substring(14,17)
+
+	console.log("*sources", id)
 	
-	var url2	= "https://s3.amazonaws.com/eo1-hyperion/L1U/" + year + "/" + doy +"/"
+	var url2	= "https://s3.amazonaws.com/eo1-hyperion/"+level+ "/" + year + "/" + doy +"/"
 	url2 		+= scene + "/" + id +".json"
-//	console.log(url2)
+	
+	console.log(url2)
 //	var url2 = "https://s3.amazonaws.com/eo1-hyperion/L1U/2013/228/EO1H0110282013228110T3/EO1H0110282013228110T3_L1U.json"
 	request.get(url2, function(err, response, body) {
 		if(!err) {
+			var data = JSON.parse(body)
+			console.log(JSON.stringify(data.sources,0,'\t'))
+		}
+		res.render("sources.ejs", {
+			id: id,
+			url: url,
+			scene_id: data.scene_id,
+			sources: data.sources
+		})
+	})
+});
+
+app.get('/source/:id', function(req, res) {
+	var id 		= req.params['id']
+	var url		= req.protocol + '://' + req.get('host') + req.originalUrl;	
+	var arr		= id.split("_")
+	var scene	= arr[0]
+	var level	= arr[1].split(".")[0]
+	var year	= scene.substring(10,14)
+	var doy		= scene.substring(14,17)
+
+	console.log("*source", id)
+	
+	var url2	= "https://s3.amazonaws.com/eo1-hyperion/"+level+ "/" + year + "/" + doy +"/"
+	url2 		+= scene + "/" + id
+	
+	console.log(url2)
+//	var url2 = "https://s3.amazonaws.com/eo1-hyperion/L1U/2013/228/EO1H0110282013228110T3/EO1H0110282013228110T3_L1U.json"
+	request.get(url2, function(err, response, body) {
+		if(!err) {
+			var data = JSON.parse(body)
+			delete data.actions
+			//console.log(JSON.stringify(data,0,'\t'))
+		}
+		res.render("source.ejs", {
+			id: id,
+			url: url,
+			data: data
+		})
+	})
+});
+
+app.get('/download/:id', function(req, res) {
+	var id 		= req.params['id']
+	var url		= req.protocol + '://' + req.get('host') + req.originalUrl;	
+	var arr		= id.split("_")
+	var scene	= arr[0]
+	var level	= arr[1]
+	var year	= scene.substring(10,14)
+	var doy		= scene.substring(14,17)
+
+	console.log("*Download", id)
+	
+	var url2	= "https://s3.amazonaws.com/eo1-hyperion/"+level+ "/" + year + "/" + doy +"/"
+	url2 		+= scene + "/" + id +".json"
+	
+	console.log(url2)
+//	var url2 = "https://s3.amazonaws.com/eo1-hyperion/L1U/2013/228/EO1H0110282013228110T3/EO1H0110282013228110T3_L1U.json"
+	request.get(url2, function(err, response, body) {
+		if(!err) {
+			//console.log(body)
 			var data = JSON.parse(body)
 		}
 		res.render("download.ejs", {
@@ -156,6 +222,7 @@ app.get('/count', 			elastic_search.count);
 app.get('/geojson', 		elastic_search.geojson);
 app.get('/health', 			elastic_search.health);
 app.post('/slack', 			elastic_search.eo1_slack);
+app.post('/slack/cmds', 	slack.cmds);
 app.post('/slack/actions', 	slack.actions);
 app.get('/slack/oauth', 	slack.oauth);
 app.get('/slacksearch/:id', slack.search);

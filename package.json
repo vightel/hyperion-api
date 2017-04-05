@@ -28,7 +28,8 @@
     "filesize": "^3.5.6",
     "moment": "^2.18.1",
     "request": "^2.79.0",
-    "sat-api-lib": "git://github.com/vightel/sat-api-lib"
+    "sat-api-lib": "git://github.com/vightel/sat-api-lib",
+    "string-format-js": "^1.0.0"
   },
   "devDependencies": {
     "apidoc": "^0.17.5"

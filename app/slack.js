@@ -1,7 +1,46 @@
-var request		= require('request');
-var moment 		= require('moment');
+var request			= require('request');
+var moment 			= require('moment');
+var elastic_search 	= require('./search.js');
+var processing 		= require('./process.js');
 
 module.exports = {
+	
+	//
+	// Respond to slack commands
+	//
+	// /eo1t process EO1H0110282013228110T3_L1U bands=10,11 algo=destripe
+	
+	cmds: function(req, res) {
+		console.log("slack")
+		console.log(req.body)
+	
+		var token 	= req.body.token
+	
+		if( (process.env.NODE_ENV != 'development') && (token != process.env.SLACK_VERIFICATION_TOKEN)) {
+			console.log("Invalid Token", token, process.env.SLACK_VERIFICATION_TOKEN)
+			return res.sendStatus(404)
+		}
+	
+		var text 	= req.body.text
+		var host 	= req.protocol + '://' + req.get('host')
+		
+		var params	= text.split(' ')
+		console.log(params)
+	
+		if( params[0] == 'search') {
+			return elastic_search.search(req,res)
+		} else if( params[0] == 'process') {
+			return processing.index(req,res)
+		} else if( params[0] == 'help') {
+			text = "Slack Command Help:\n"
+			text += "\t/search EO1* | search <city> | search <q> limit=5 \n"
+			text += "\t/process <scene> bands=5 algorithm=destripe \n"
+			var data = {
+				text: text
+			}
+			res.json(data)	
+		}
+	},
 	
 	search: function(req, res) {
 		var id 		= req.params['id']
@@ -23,10 +62,12 @@ module.exports = {
 		var url		= "https://slack.com/api/search.messages"
 
 		var data_request = {
-			token: process.env.SLACK_OAUTH_ACCESS_TOKEN,
-			query: id,
-			pretty: 1,
-			highlight: 0
+			token: 		process.env.SLACK_OAUTH_ACCESS_TOKEN,
+			query: 		id,
+			pretty: 	1,
+			sort: 		'timestamp',
+			sort_dir: 	'asc',
+			highlight: 	0
 		}
 
 		var options = {
@@ -38,10 +79,13 @@ module.exports = {
 		request(options, function (error, response, body) {
 			if (!error && response.statusCode == 200) {
 				var data = JSON.parse(body)
-				//console.log("*",JSON.stringify(data,null,'\t'))
-				
+				//console.log("*slack search",JSON.stringify(data,null,'\t'))
+				if(!data.ok) {
+					console.error("SLACK search error", data)
+					return cb(null, null)
+				}
 				// go through matches
-				if( data.messages) {
+				if( data.messages.total > 0 ) {
 					for( var m in data.messages.matches) {
 						var match 		= data.messages.matches[m]
 						var iid			= match.iid
@@ -66,6 +110,12 @@ module.exports = {
 							request(options, function (error, response, body) {
 								if (!error && response.statusCode == 200) {
 									var data = JSON.parse(body)
+									if( !data.ok ) {
+										console.error(data)
+										cb(error, null)
+										return
+									}
+									//console.log("*slack message", JSON.stringify(data,null,'\t'))
 									var message = data.messages[0]
 									delete message.attachments
 									message.iid 		= iid
@@ -79,13 +129,14 @@ module.exports = {
 										if( reaction.name == "+1") message.thumbsup 	= reaction.count
 										if( reaction.name == "-1") message.thumbsdown 	= reaction.count
 									}
-									console.log("**",JSON.stringify(message,null,'\t'))
+									//console.log("**",JSON.stringify(message,null,'\t'))
 									cb(error, message)
 								} else {
 									console.log("channel history error", error)
 									cb(error, null)
 								}
 							})
+							break;
 						}
 					}
 				} else {

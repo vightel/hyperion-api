@@ -1,0 +1,123 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Show</title>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+	<style>
+	.rcorners2 {
+	    border-radius: 5px;
+	    border: 2px solid #73AD21;
+	    padding: 5px; 
+	    width: 50px;
+	    height: 32px; 
+	}
+	</style>
+</head>
+<body>
+	<div class='container'>
+		<h2>
+			<img src='/favicon-32x32.png'>&nbsp;
+			Show Source
+		</h2>
+		<hr/>
+		
+		
+		<input type="hidden" id="show" value='<%=id %>'>
+		  
+		<div id='results' class='container responsive'></div>
+	</div>
+<script>
+				var feature = 	<%- JSON.stringify(data, null, "\t") %>
+
+				var html = ""
+		
+				html += "<div class='well col-md-6' >"
+				html += "<table><tr><td width='40'>"
+				html += "<a href='" + feature.thumbnail +"'>"
+				html += "<img src='"+feature.thumbnail+"' class='thumbnail' height='300'/></a> </td>"
+				html += "<td><table class=''>"
+				html += "<tr><td width='80'>Product</td><td>"
+				html += feature.satellite_name +" &nbsp;"
+				html += feature.instrument +" &nbsp;"
+				html += "</td></tr>"
+				html += "<tr><td width='80'>Level</td><td>"
+				html += feature.level +" &nbsp;"
+				html += "</td></tr>"
+				html += "<tr><td>Scene</td><td>" 
+				html += feature.scene_id +"</td></tr>"
+				html += "<tr><td>Date</td><td>" 
+				html += feature.date +"</td></tr>"
+				
+				html += "<tr><td>Near By</td><td>" 
+				html += feature.nearBy +"</td></tr>"
+				html += "<tr><td>Country</td><td>" 
+				html += feature.adminName + ", " +feature.countryName +", "+feature.countryCode +"</td></tr>"
+				
+				
+				html += "<tr><td>Attribution</td><td>"
+				html += feature.attribution +"</td></tr>"
+				html += "<tr><td>Source</td><td>" 
+				html += feature.source +"</td></tr>"
+				html += "<tr><td>License</td><td>" 
+				html += feature.license +"</td></tr>"
+				html += "<tr><td>Metadata</td><td>"
+				html += "<a href='" +feature.metadata +"'>metadata</a></td></tr>"
+				
+				html += "<tr><td>Actions</td><td>"
+				if( feature.level == 'L1U') {
+					html += "<a href='/process/" +feature.scene_id + "_" + feature.level +"'>Process</a><br/>"
+					html += "<a href='/download/" +feature.scene_id +"'>Download</a><br/>"
+				} else {
+					html += "<a href='/download/" +feature.scene_id +"'>Download</a><br/>"					
+				}
+				
+				if(feature.sources.length>0) {
+					html += "<tr><td>Sources</td><td>"
+					html += "<table class=''>"
+					for( var s in feature.sources ) {
+						var source 		= feature.sources[s]
+						console.log(JSON.stringify(source,0,'\t'))
+						var metadata 	= source.downloads.METADATA
+						if( metadata.href ) metadata = metadata.href
+						var basename_a	= metadata.split("/")
+						var basename	= basename_a[basename_a.length-1]
+						var href		= "/source/"+basename
+		
+						html += "<tr><td>"+ source.attribution + " " + source.description + " "
+						html += "<a href='"+href+"'>"+basename+"</a>"
+						html += "</td></tr>"
+					}
+					html += "</table></td></tr>"
+				} else {
+					html += "<tr><td>Sources</td><td>N/A</td></tr>"
+				}
+				
+				//console.log(feature.sources)
+				
+				html += "</td></tr>"
+				
+				html += "</tr></table>"
+				html += "</td></tr></table><br/>"
+				
+				html += "</div>"
+			
+			$("#results").html(html)
+
+</script>
+	
+</body>
+</html>
+	

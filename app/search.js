@@ -98,8 +98,11 @@ function search (action, req, res) {
 	});
 };
 
+//
+// SLACK comd to search
+//
 function slack( satellite, req, res) {	
-	console.log("slack")
+	console.log("slack search")
 	console.log(req.body)
 	
 	var token 	= req.body.token

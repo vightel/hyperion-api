@@ -57,7 +57,7 @@
 			var html = ""
 			for( var f in data.features ) {
 				var feature = data.features[f]
-				//console.log(JSON.stringify(feature))
+				//(JSON.stringify(feature))
 				html += "<div class='well col-md-6' >"
 				html += "<table><tr><td width='40'>"
 				html += "<a href='" + feature.properties.thumbnail +"'>"
@@ -66,12 +66,21 @@
 				html += "<tr><td width='80'>Product</td><td>"
 				html += feature.properties.satellite_name +" &nbsp;"
 				html += feature.properties.instrument +" &nbsp;"
+				html += "</td></tr>"
+				html += "<tr><td width='80'>Level</td><td>"
 				html += feature.properties.level +" &nbsp;"
 				html += "</td></tr>"
 				html += "<tr><td>Scene</td><td>" 
 				html += feature.properties.scene_id +"</td></tr>"
 				html += "<tr><td>Date</td><td>" 
 				html += feature.properties.date +"</td></tr>"
+			
+				html += "<tr><td>Near By</td><td>" 
+				html += feature.properties.nearBy +"</td></tr>"
+				html += "<tr><td>Country</td><td>" 
+				html += feature.properties.adminName + ", " +feature.properties.countryName +", "+feature.properties.countryCode +"</td></tr>"
+				
+				
 				html += "<tr><td>Attribution</td><td>"
 				html += feature.properties.attribution +"</td></tr>"
 				html += "<tr><td>Source</td><td>" 
@@ -82,8 +91,17 @@
 				html += "<a href='" +feature.properties.metadata +"'>metadata</a></td></tr>"
 				
 				html += "<tr><td>Actions</td><td>"
-				html += "<a href='/download/" +feature.properties.scene_id + "_" + feature.properties.level +"'>Download</a><br/>"
-				html += "<a href='/process/" +feature.properties.scene_id + "_" + feature.properties.level +"'>Process</a><br/>"
+				if( feature.properties.level != 'L3') {
+					html += "<a href='/process/" +feature.properties.scene_id + "_" + feature.properties.level +"'>Process</a><br/>"
+					html += "<a href='/download/" +feature.properties.scene_id +"'>Download</a><br/>"
+				} else {
+					html += "<a href='/download/" +feature.properties.scene_id +"'>Download</a><br/>"					
+				}
+				
+				//console.log(feature.properties.sources)
+				html += "<tr><td>Sources</td><td>"
+				html += "<a href='/sources/" +feature.properties.scene_id +"'>Sources</a></td></tr>"
+				
 				html += "</td></tr>"
 				
 				html += "</tr></table>"
