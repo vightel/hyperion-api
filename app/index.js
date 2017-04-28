@@ -11,6 +11,24 @@ var engines 		= require('consolidate');
 var elastic_search 	= require('./search.js');
 var processing 		= require('./process');
 var slack 			= require('./slack');
+var assert			= require('assert');
+var path			= require('path');
+
+// Check ENVIRONMENT VARIABLES
+assert(process.env.SLACK_VERIFICATION_TOKEN, "Missing SLACK_VERIFICATION_TOKEN ENV")
+assert(process.env.ES_HOST, "Missing ES_HOST ENV")
+assert(process.env.ES_PORT, "Missing ES_PORT ENV")
+//assert(process.env.NAME, "Missing NAME ENV")
+//assert(process.env.WEBSITE, "Missing WEBSITE ENV")
+
+var appRoot;
+
+if (process.env.NODE_ENV == 'development') {
+	appRoot = process.env.PWD;
+} else {
+	appRoot = "/tmp"
+}
+console.log("appRoot",appRoot)
 
 /*----------------------------------
 // START MIDDLEWARES
@@ -76,9 +94,21 @@ app.get('/search/:id', function(req, res) {
 	
 });
 
+app.get('/process/:id/:algorithm', function(req, res) {
+	var id 			= req.params['id']
+	var algorithm 	= req.params['algorithm']
+	var host		= req.protocol + '://' + req.get('host')
+	
+		res.render("process_algorithm.ejs", {
+			id: 	id,
+			algorithm: algorithm,
+			host: host
+	    })		
+});
+
 app.get('/process/:id', function(req, res) {
-	var id 		= req.params['id']
-	var host	= req.protocol + '://' + req.get('host')
+	var id 			= req.params['id']
+	var host		= req.protocol + '://' + req.get('host')
 	
   //search('eo1', req, res);
   res.render("process.ejs", {
@@ -87,9 +117,36 @@ app.get('/process/:id', function(req, res) {
   })
 });
 
+app.get('/sendFile/:id', function(req, res) {
+	var id 			= req.params['id']
+	var host		= req.protocol + '://' + req.get('host')
+	
+	var year		= id.substring(10,14)
+	var doy			= id.substring(14,17)
+	var baseName	= path.basename(id, ".png")
+	var productName	= path.join(appRoot, "tmp", year, doy, baseName, id) 
+
+    res.sendFile( productName)
+});
+
+app.get('/product/:id', function(req, res) {
+	var id 			= req.params['id']
+	var host		= req.protocol + '://' + req.get('host')
+	
+//	var year		= scene.substring(10,14)
+//	var doy			= scene.substring(14,17)
+//	var productName	= path.join(appRoot, "tmp", year, doy, id, id+".jpg") 
+
+	res.render("product.ejs", {
+		id: 	id,
+		host: 	host,
+		href: 	"/sendFile/"+id
+	})
+});
+
 app.get('/show/:id', function(req, res) {
-	var id 		= req.params['id']
-	var url		= req.protocol + '://' + req.get('host') + req.originalUrl;	
+	var id 			= req.params['id']
+	var url			= req.protocol + '://' + req.get('host') + req.originalUrl;	
 	slack.searchPost( id, function(err, data) {
 		res.render("show.ejs", {
 			id: id,
@@ -217,7 +274,7 @@ app.get('/geoquery', 		elastic_search.eo1_geoquery);
 app.get('/landsat', 		elastic_search.landsat_query);
 app.get('/sentinel', 		elastic_search.sentinel_query);
 app.get('/eo1', 			elastic_search.eo1_query);
-app.get('/eo1/process', 	processing.index);
+app.post('/eo1/process', 	processing.index);
 app.get('/count', 			elastic_search.count);
 app.get('/geojson', 		elastic_search.geojson);
 app.get('/health', 			elastic_search.health);
